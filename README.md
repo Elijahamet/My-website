@@ -1,2 +1,2 @@
 # My-website
-An exclusive
+An exclusive website
