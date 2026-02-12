@@ -1,479 +1,424 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Set current year in footer
-  document.getElementById('year').textContent = new Date().getFullYear();
+// ==================== INITIALIZATION ====================
+document.addEventListener('DOMContentLoaded', () => {
+  initializeAnimations();
+  initializeMobileMenu();
+  initializeScrollAnimations();
+  initialize3DCanvas();
+  initializeContactForm();
+  initializeButtonAnimations();
+});
 
-  // Mobile navigation toggle
-  const hamburger = document.querySelector('.hamburger');
-  const navLinks = document.querySelector('.nav-links');
+// ==================== 3D CANVAS SETUP ====================
+let scene, camera, renderer, particles = [];
 
-  hamburger.addEventListener('click', function() {
-    this.classList.toggle('active');
-    navLinks.classList.toggle('active');
+function initializeCanvas() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+
+  // Scene setup
+  scene = new THREE.Scene();
+  scene.background = null;
+
+  // Camera setup
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 50;
+
+  // Renderer setup
+  renderer = new THREE.WebGLRenderer({ 
+    canvas: canvas, 
+    alpha: true, 
+    antialias: true,
+    precision: 'highp'
   });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 0);
 
-  // Close mobile menu when clicking a link
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      navLinks.classList.remove('active');
+  // Create particles
+  createParticles();
+  
+  // Add lights
+  const light = new THREE.PointLight(0x6366f1, 1);
+  light.position.set(10, 10, 10);
+  scene.add(light);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(ambientLight);
+
+  // Mouse movement interaction
+  document.addEventListener('mousemove', onMouseMove);
+  
+  // Animate
+  animateScene();
+  
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  });
+}
+
+function createParticles() {
+  const geometry = new THREE.BufferGeometry();
+  const particleCount = 150;
+  const positions = new Float32Array(particleCount * 3);
+  const velocities = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 200;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
+
+    velocities[i * 3] = (Math.random() - 0.5) * 2;
+    velocities[i * 3 + 1] = (Math.random() - 0.5) * 2;
+    velocities[i * 3 + 2] = (Math.random() - 0.5) * 2;
+
+    particles.push({
+      x: positions[i * 3],
+      y: positions[i * 3 + 1],
+      z: positions[i * 3 + 2],
+      vx: velocities[i * 3],
+      vy: velocities[i * 3 + 1],
+      vz: velocities[i * 3 + 2]
     });
-  });
-
-  // Smooth scrolling for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      const targetId = this.getAttribute('href');
-      const targetElement = document.querySelector(targetId);
-      
-      if (targetElement) {
-        window.scrollTo({
-          top: targetElement.offsetTop - 80,
-          behavior: 'smooth'
-        });
-      }
-    });
-  });
-
-  // Sticky navbar on scroll
-  window.addEventListener('scroll', function() {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  });
-
-  // Typing animation for hero subtitle
-  const typingElement = document.querySelector('.typing-animation');
-  const professions = ['MERN Stack Developer', 'UI/UX Designer', 'Photographer', 'Creative Thinker'];
-  let professionIndex = 0;
-  let charIndex = 0;
-  let isDeleting = false;
-  let typingSpeed = 100;
-
-  function type() {
-    const currentProfession = professions[professionIndex];
-    
-    if (isDeleting) {
-      typingElement.textContent = currentProfession.substring(0, charIndex - 1);
-      charIndex--;
-      typingSpeed = 50;
-    } else {
-      typingElement.textContent = currentProfession.substring(0, charIndex + 1);
-      charIndex++;
-      typingSpeed = 100;
-    }
-
-    if (!isDeleting && charIndex === currentProfession.length) {
-      isDeleting = true;
-      typingSpeed = 1500; // Pause at end
-    } else if (isDeleting && charIndex === 0) {
-      isDeleting = false;
-      professionIndex = (professionIndex + 1) % professions.length;
-      typingSpeed = 500; // Pause before typing next
-    }
-
-    setTimeout(type, typingSpeed);
   }
 
-  // Start typing animation after a short delay
-  setTimeout(type, 1000);
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-  // Initialize GSAP animations
+  const material = new THREE.PointsMaterial({
+    color: 0x6366f1,
+    size: 1.5,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.8
+  });
+
+  const particleSystem = new THREE.Points(geometry, material);
+  scene.add(particleSystem);
+  particleSystem.userData.geometry = geometry;
+  particleSystem.userData.velocities = velocities;
+  particleSystem.userData.positions = positions;
+}
+
+let mouseX = 0, mouseY = 0;
+
+function onMouseMove(event) {
+  mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+function animateScene() {
+  requestAnimationFrame(animateScene);
+
+  if (scene.children.length > 0) {
+    const particleSystem = scene.children[scene.children.length - 1];
+    
+    if (particleSystem.userData.geometry) {
+      const positions = particleSystem.userData.geometry.attributes.position.array;
+      const velocities = particleSystem.userData.velocities;
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].x += particles[i].vx;
+        particles[i].y += particles[i].vy;
+        particles[i].z += particles[i].vz;
+
+        // Bounce off edges
+        if (Math.abs(particles[i].x) > 100) particles[i].vx *= -1;
+        if (Math.abs(particles[i].y) > 100) particles[i].vy *= -1;
+        if (Math.abs(particles[i].z) > 100) particles[i].vz *= -1;
+
+        positions[i * 3] = particles[i].x + mouseX * 50;
+        positions[i * 3 + 1] = particles[i].y + mouseY * 50;
+        positions[i * 3 + 2] = particles[i].z;
+      }
+
+      particleSystem.userData.geometry.attributes.position.needsUpdate = true;
+      particleSystem.rotation.x += 0.0001;
+      particleSystem.rotation.y += 0.0002;
+    }
+  }
+
+  renderer.render(scene, camera);
+}
+
+function initialize3DCanvas() {
+  // Wrap in requestAnimationFrame to ensure DOM is ready
+  requestAnimationFrame(initializeCanvas);
+}
+
+// ==================== GSAP SCROLL ANIMATIONS ====================
+function initializeScrollAnimations() {
   gsap.registerPlugin(ScrollTrigger);
 
-  // Animate sections on scroll
-  gsap.utils.toArray('section').forEach(section => {
-    gsap.from(section, {
+  // About section animation
+  gsap.to('.about-text', {
+    scrollTrigger: {
+      trigger: '.about',
+      start: 'top center',
+      end: 'center center',
+      scrub: 1,
+      markers: false
+    },
+    opacity: 1,
+    y: 0,
+    duration: 1
+  });
+
+  // Project cards stagger animation
+  gsap.utils.toArray('.project-card').forEach((card, index) => {
+    gsap.from(card, {
       scrollTrigger: {
-        trigger: section,
+        trigger: card,
         start: 'top 80%',
-        toggleActions: 'play none none none'
+        end: 'top 50%',
+        scrub: 0.5,
+        markers: false
       },
       opacity: 0,
       y: 50,
-      duration: 1,
-      ease: 'power3.out'
+      rotation: 5,
+      duration: 0.8,
+      delay: index * 0.1
     });
   });
 
-  // Animate skills items
-  gsap.utils.toArray('.skill-item').forEach((item, i) => {
-    gsap.from(item, {
+  // Skill cards animation
+  gsap.utils.toArray('.skill-card').forEach((card, index) => {
+    gsap.from(card, {
       scrollTrigger: {
-        trigger: '.skills',
-        start: 'top 80%',
-        toggleActions: 'play none none none'
+        trigger: card,
+        start: 'top 85%',
+        end: 'top 60%',
+        scrub: 0.3,
+        markers: false
       },
       opacity: 0,
       y: 30,
-      duration: 0.5,
-      delay: i * 0.1,
-      ease: 'power3.out'
+      duration: 0.6,
+      delay: index * 0.08
     });
   });
 
-  // Skills data
-  const skills = [
-    { icon: 'fab fa-react', name: 'React' },
-    { icon: 'fab fa-node-js', name: 'Node.js' },
-    { icon: 'fas fa-database', name: 'MongoDB' },
-    { icon: 'fab fa-js', name: 'JavaScript' },
-    { icon: 'fab fa-python', name: 'Python' },
-    { icon: 'fab fa-java', name: 'Java' },
-    { icon: 'fas fa-code', name: 'C#' },
-    { icon: 'fas fa-paint-brush', name: 'Graphic Design' },
-    { icon: 'fas fa-camera', name: 'Photography' },
-    { icon: 'fab fa-figma', name: 'Figma' },
-    { icon: 'fas fa-mobile-alt', name: 'UI/UX' },
-    { icon: 'fas fa-server', name: 'REST APIs' }
-  ];
-
-  // Render skills
-  const skillsGrid = document.querySelector('.skills-grid');
-  skills.forEach(skill => {
-    const skillItem = document.createElement('div');
-    skillItem.className = 'skill-item';
-    skillItem.innerHTML = `
-      <i class="${skill.icon}"></i>
-      <span>${skill.name}</span>
-    `;
-    skillsGrid.appendChild(skillItem);
+  // Section headers animation
+  gsap.utils.toArray('.section-header').forEach((header) => {
+    gsap.from(header, {
+      scrollTrigger: {
+        trigger: header,
+        start: 'top 85%',
+        end: 'top 60%',
+        scrub: 0.5,
+        markers: false
+      },
+      opacity: 0,
+      y: 40,
+      duration: 0.8
+    });
   });
 
-  // Project filter functionality
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const projects = [
-    {
-      id: 1,
-      title: 'E-Commerce Platform',
-      description: 'Full MERN stack e-commerce solution with payment gateway integration, user authentication, and admin dashboard.',
-      tags: ['mern', 'react', 'node'],
-      category: 'mern',
-      image: 'assets/images/project1.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://e-commerce2e.netlify.app/'
-    },
-    {
-      id: 2,
-      title: 'Task Management App',
-      description: 'React application with drag-and-drop functionality, real-time updates, and Firebase backend.',
-      tags: ['react', 'firebase'],
-      category: 'react',
-      image: 'assets/images/project2.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://todolist678r.netlify.app/'
-    },
-    {
-      id: 3,
-      title: 'Portfolio Design',
-      description: 'Modern portfolio design created in Figma and implemented with React and GSAP animations.',
-      tags: ['design', 'react', 'figma'],
-      category: 'design',
-      image: 'assets/images/project3.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://porfoliour.netlify.app/'
-    },
-    {
-      id: 4,
-      title: 'Social Media Dashboard',
-      description: 'Analytics dashboard for social media management with data visualization and reporting.',
-      tags: ['mern', 'react', 'charts'],
-      category: 'mern',
-      image: 'assets/images/project4.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://socialnetworkprototype.netlify.app/'
-    },
-    {
-      id: 5,
-      title: 'Weather Application',
-      description: 'Weather app with location detection, 5-day forecast, and interactive weather maps.',
-      tags: ['react', 'api', 'geolocation'],
-      category: 'react',
-      image: 'assets/images/project5.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://weatherapp4r.netlify.app/'
-    },
-    {
-      id: 6,
-      title: 'Coffee App Design',
-      description: 'Complete brand identity package including logo, color palette, and brand guidelines.',
-      tags: ['design', 'branding'],
-      category: 'design',
-      image: 'assets/images/project6.jpg',
-      github: 'https://github.com/Elijahamet',
-      live: 'https://coffeecafepage.netlify.app/'
-    }
-  ];
+  // Stat items animation
+  gsap.utils.toArray('.stat-item').forEach((item, index) => {
+    gsap.from(item, {
+      scrollTrigger: {
+        trigger: item,
+        start: 'top 80%',
+        end: 'top 50%',
+        scrub: 0.3,
+        markers: false
+      },
+      opacity: 0,
+      scale: 0.8,
+      y: 30,
+      duration: 0.6,
+      delay: index * 0.1
+    });
+  });
+}
 
-  // Render projects
-  const projectsGrid = document.querySelector('.projects-grid');
-  
-  function renderProjects(filter = 'all') {
-    projectsGrid.innerHTML = '';
-    const filteredProjects = filter === 'all' 
-      ? projects 
-      : projects.filter(project => project.tags.includes(filter));
-    
-    filteredProjects.forEach((project, index) => {
-      const projectCard = document.createElement('div');
-      projectCard.className = 'project-card';
-      projectCard.setAttribute('data-category', project.category);
-      
-      projectCard.innerHTML = `
-        <div class="project-image">
-          <img src="${project.image}" alt="${project.title}">
-        </div>
-        <div class="project-info">
-          <h4>${project.title}</h4>
-          <p>${project.description}</p>
-          <div class="project-tags">
-            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
-          </div>
-          <div class="project-links">
-            <a href="${project.github}" target="_blank"><i class="fab fa-github"></i> Code</a>
-            <a href="${project.live}" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
-          </div>
-        </div>
-      `;
-      
-      // Add animation delay based on index
-      gsap.from(projectCard, {
-        scrollTrigger: {
-          trigger: projectCard,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        },
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        delay: index * 0.1,
-        ease: 'power3.out'
+// ==================== MOBILE MENU ====================
+function initializeMobileMenu() {
+  const hamburger = document.querySelector('.hamburger');
+  const navMenu = document.querySelector('.nav-menu');
+
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
       });
-      
-      projectsGrid.appendChild(projectCard);
     });
   }
 
-  filterButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      // Remove active class from all buttons
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      
-      // Add active class to clicked button
-      this.classList.add('active');
-      
-      const filterValue = this.getAttribute('data-filter');
-      
-      // Render filtered projects
-      renderProjects(filterValue);
-    });
-  });
-
-  // Initialize projects
-  renderProjects();
-
-  // Design gallery functionality
-  const tabButtons = document.querySelectorAll('.tab-btn');
-  const designWork = [
-    {
-      id: 1,
-      title: 'Logo Design',
-      category: 'graphic',
-      image: 'assets/images/design1.jpg'
-    },
-    {
-      id: 2,
-      title: 'UI Kit',
-      category: 'graphic',
-      image: 'assets/images/design2.jpg'
-    },
-    {
-      id: 3,
-      title: 'Landscape Photo',
-      category: 'photo',
-      image: 'assets/images/photo1.jpg'
-    },
-    {
-      id: 4,
-      title: 'Brand Guidelines',
-      category: 'graphic',
-      image: 'assets/images/design3.jpg'
-    },
-    {
-      id: 5,
-      title: 'Portrait Photo',
-      category: 'photo',
-      image: 'assets/images/photo2.jpg'
-    },
-    {
-      id: 6,
-      title: 'Mobile App Design',
-      category: 'graphic',
-      image: 'assets/images/design4.jpg'
-    }
-  ];
-
-  // Render design gallery
-  const designGallery = document.querySelector('.design-gallery');
-  
-  function renderDesignGallery(tab = 'graphic') {
-    designGallery.innerHTML = '';
-    const filteredItems = designWork.filter(item => item.category === tab);
-    
-    filteredItems.forEach((item, index) => {
-      const galleryItem = document.createElement('div');
-      galleryItem.className = 'gallery-item';
-      galleryItem.setAttribute('data-tab', item.category);
-      
-      galleryItem.innerHTML = `
-        <img src="${item.image}" alt="${item.title}">
-        <div class="gallery-overlay">
-          <i class="fas fa-search-plus"></i>
-        </div>
-      `;
-      
-      // Add animation delay based on index
-      gsap.from(galleryItem, {
-        scrollTrigger: {
-          trigger: galleryItem,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        },
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        delay: index * 0.1,
-        ease: 'power3.out'
-      });
-      
-      designGallery.appendChild(galleryItem);
-    });
-  }
-
-  tabButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      // Remove active class from all buttons
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      
-      // Add active class to clicked button
-      this.classList.add('active');
-      
-      const tabValue = this.getAttribute('data-tab');
-      
-      // Render filtered gallery items
-      renderDesignGallery(tabValue);
-    });
-  });
-
-  // Initialize design gallery
-  renderDesignGallery();
-
-  // Contact form submission
-  const contactForm = document.getElementById('contactForm');
-  
-  contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form values
-    const formData = new FormData(this);
-    const formValues = Object.fromEntries(formData.entries());
-    
-    // Here you would typically send the form data to a server
-    console.log('Form submitted:', formValues);
-    
-    // Show success message
-    alert('Thank you for your message! I will get back to you soon.');
-    
-    // Reset form
-    this.reset();
-  });
-
-  // Initialize lightbox for design gallery
-  // This would require a lightbox library like fancybox or lightbox2
-  // Here's a simple implementation that would need to be expanded
-  document.addEventListener('click', function(e) {
-    if (e.target.closest('.gallery-overlay') || e.target.classList.contains('gallery-overlay')) {
-      const imgSrc = e.target.closest('.gallery-item').querySelector('img').src;
-      // In a real implementation, you would open a lightbox with the image
-      console.log('Opening lightbox for:', imgSrc);
+  // Close menu on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.navbar-container')) {
+      hamburger?.classList.remove('active');
+      navMenu?.classList.remove('active');
     }
   });
+}
 
-  // Add hover effect to social links
-  const socialLinks = document.querySelectorAll('.social-links a');
-  
-  socialLinks.forEach(link => {
-    link.addEventListener('mouseenter', function() {
-      const icon = this.querySelector('i');
-      gsap.to(icon, {
-        duration: 0.3,
-        y: -5,
-        ease: 'power2.out'
-      });
-    });
-    
-    link.addEventListener('mouseleave', function() {
-      const icon = this.querySelector('i');
-      gsap.to(icon, {
-        duration: 0.3,
-        y: 0,
-        ease: 'power2.out'
-      });
-    });
-  });
-});
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.getElementById('theme-toggle');
-
-  // Load saved theme from localStorage
-  if (localStorage.getItem('theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-    toggle.checked = true;
-  }
-
-  toggle.addEventListener('change', () => {
-    if (toggle.checked) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
+// ==================== ANIMATIONS ====================
+function initializeAnimations() {
+  // Navbar scroll animation
+  window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+      navbar.style.borderBottomColor = 'rgba(99, 102, 241, 0.4)';
     } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
+      navbar.style.borderBottomColor = 'rgba(99, 102, 241, 0.2)';
+    }
+  });
+
+  // CTA button ripple effect
+  const ctaButton = document.querySelector('.cta-button');
+  if (ctaButton) {
+    ctaButton.addEventListener('click', () => {
+      gsap.to(ctaButton, {
+        scale: 0.95,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1
+      });
+    });
+  }
+}
+
+// ==================== BUTTON ANIMATIONS ====================
+function initializeButtonAnimations() {
+  document.querySelectorAll('.project-btn, .submit-btn').forEach(button => {
+    button.addEventListener('mouseenter', () => {
+      gsap.to(button, {
+        scale: 1.05,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+    });
+
+    button.addEventListener('mouseleave', () => {
+      gsap.to(button, {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+    });
+  });
+
+  // Skill card glow effect
+  document.querySelectorAll('.skill-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      gsap.to(card, {
+        duration: 0.3,
+        ease: 'power2.out'
+      });
+    });
+  });
+}
+
+// ==================== CONTACT FORM ====================
+function initializeContactForm() {
+  const form = document.getElementById('contactForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Get form data
+      const formData = new FormData(form);
+
+      // Success animation
+      const submitBtn = form.querySelector('.submit-btn');
+      const originalText = submitBtn.textContent;
+
+      gsap.to(submitBtn, {
+        scale: 1.1,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1
+      });
+
+      submitBtn.textContent = '✓ Message Sent!';
+      submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #34d399 100%)';
+
+      setTimeout(() => {
+        form.reset();
+        submitBtn.textContent = originalText;
+        submitBtn.style.background = 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)';
+      }, 2000);
+    });
+  }
+}
+
+// ==================== SMOOTH SCROLL ANCHOR LINKS ====================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', (e) => {
+    const href = anchor.getAttribute('href');
+    if (href === '#') return;
+    
+    e.preventDefault();
+    const target = document.querySelector(href);
+    
+    if (target) {
+      gsap.to(window, {
+        scrollTo: {
+          y: target,
+          autoKill: false
+        },
+        duration: 1,
+        ease: 'power2.inOut'
+      });
     }
   });
 });
-const educationData = [
-  {
-    school: "Bishop Herman College",
-    degree: "High School Diploma",
-    years: "2019 - 2022",
-    details: "studied Business, graduated with honors.",
-    image: "assets/images/springfield-high.jpg" // update path as needed
-  },
-  {
-    school: "University of Ghana",
-    degree: "Bachelor of Science in Computer Science",
-    years: "2024 - 2027",
-    details: "Majored in  computer science .",
-    image: "assets/images/state-university.jpg" // update path as needed
-  }
-];
 
-const educationList = document.querySelector('.education-list');
-educationData.forEach(item => {
-  const eduDiv = document.createElement('div');
-  eduDiv.className = 'education-item';
-  eduDiv.innerHTML = `
-    <img src="${item.image}" alt="${item.school}" class="education-img" />
-    <div class="education-text">
-      <h3>${item.school}</h3>
-      <p><strong>${item.degree}</strong></p>
-      <p>${item.years}</p>
-      <p>${item.details}</p>
-    </div>
-  `;
-  educationList.appendChild(eduDiv);
+// ==================== PARALLAX EFFECT ====================
+window.addEventListener('scroll', () => {
+  const hero = document.querySelector('.hero');
+  if (hero) {
+    const scrollPosition = window.scrollY;
+    hero.style.backgroundPosition = `0% ${scrollPosition * 0.5}px`;
+  }
 });
+
+// ==================== PERFORMANCE OPTIMIZATION ====================
+// Throttle scroll events for better performance
+let ticking = false;
+function requestTick() {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      ticking = false;
+    });
+    ticking = true;
+  }
+}
+
+// Intersection Observer for lazy animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.project-card, .skill-card').forEach(el => {
+  observer.observe(el);
+});
+
+// ==================== REDUCE MOTION SUPPORT ====================
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (prefersReducedMotion) {
+  document.documentElement.style.scrollBehavior = 'auto';
+  gsap.globalTimeline.timeScale(0.6);
+}

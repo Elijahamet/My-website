@@ -3,195 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ELIAH | MERN Stack Developer & Designer</title>
+  <title>Elijah Ametefe | Professional Developer & Designer</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Animated Background -->
-  <div class="animated-bg"></div>
-  
   <!-- Navigation -->
   <nav class="navbar">
-    <div class="container">
-      <a href="#" class="logo">ELIJAH<span>AMETEFE</span></a>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#design">Design</a></li>
-        <li><a href="#contact">Contact</a></li>
+    <div class="navbar-container">
+      <div class="logo">
+        <span class="logo-text">Elijah</span>
+        <span class="logo-accent">.</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#work" class="nav-link">Work</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
       </ul>
-      <label class="theme-switch" for="theme-toggle">
-  <input type="checkbox" id="theme-toggle" />
-  <span class="slider"></span>
-</label>
-
-
-
       <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
     </div>
   </nav>
 
   <!-- Hero Section -->
   <section id="home" class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <h1>Hi, I'm <span class="highlight">ELIJAH AMETEFE</span></h1>
-        <h2 class="typing-animation"></h2>
-        <p>I build efficient, scalable, and visually appealing solutions that solve real-world problems.</p>
-        <div class="cta-buttons">
-          <a href="#projects" class="btn primary pulse">View My Work</a>
-          <a href="#contact" class="btn secondary">Contact Me</a>
-        </div>
-      </div>
-      <div class="hero-image">
-        <div class="image-wrapper floating">
-          <img src="assets/images/profile.jpg" alt="Your Name">
-        </div>
+    <div class="stars-background"></div>
+    <canvas id="heroCanvas" class="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="word">Creative</span>
+          <span class="word">Developer</span>
+          <span class="word">&amp; Designer</span>
+        </h1>
+        <p class="hero-subtitle">Building stunning digital experiences with cutting-edge technology and immersive 3D animations</p>
+        <button class="cta-button">Explore My Work</button>
       </div>
     </div>
-    <div class="scroll-down">
-      <i class="fas fa-chevron-down bounce"></i>
-    </div>
-  </section>
-
-  <!-- Skills Section -->
-  <section class="skills">
-    <div class="container">
-      <h3>Technologies I Work With</h3>
-      <div class="skills-grid">
-        <!-- Skills will be added dynamically -->
-      </div>
-    </div>
-  </section>
-
-  <!-- Projects Section -->
-  <section id="projects" class="projects">
-    <div class="container">
-      <h3 class="section-title">My Projects</h3>
-      <div class="filter-buttons">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="mern">MERN</button>
-        <button class="filter-btn" data-filter="react">React</button>
-        <button class="filter-btn" data-filter="design">Design</button>
-      </div>
-      <div class="projects-grid">
-        <!-- Projects will be added dynamically -->
-      </div>
+    <div class="scroll-indicator">
+      <span>Scroll to explore</span>
+      <div class="scroll-arrow"></div>
     </div>
   </section>
 
   <!-- About Section -->
-  <section id="about" class="about">
-    <div class="container">
-      <div class="about-image">
-        <div class="image-wrapper floating">
-          <img src="assets/images/about.jpg" alt="About Me">
-        </div>
+  <section id="about" class="about section-padding">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>About Me</h2>
+        <p class="section-subtitle">Crafting experiences that matter</p>
       </div>
       <div class="about-content">
-        <h3 class="section-title">About Me</h3>
-        <p>I'm a passionate MERN stack developer with expertise in building full-stack web applications. My journey in tech started with graphic design and photography, which gives me a unique perspective on creating visually appealing and user-friendly applications.</p>
-        <p>When I'm not coding, you can find me taking photos, designing logos, or exploring new technologies in the ever-evolving tech landscape.</p>
-        <div class="timeline">
-          <div class="timeline-item">
-            <h4>2023 - Present</h4>
-            <p>Freelance MERN Stack Developer</p>
+        <div class="about-text">
+          <p>I'm a passionate full-stack developer and designer creating beautiful, interactive digital experiences. With expertise in modern web technologies and 3D graphics, I transform ideas into stunning realities that users love.</p>
+          <p>My approach combines clean, efficient code with thoughtful design principles, ensuring every project is both visually stunning and functionally excellent. I specialize in bringing static designs to life through smooth animations and immersive interactions.</p>
+        </div>
+        <div class="about-stats">
+          <div class="stat-item">
+            <h3 class="stat-number">50+</h3>
+            <p class="stat-label">Projects Delivered</p>
           </div>
-          <div class="timeline-item">
-            <h4>2021 - 2023</h4>
-            <p>Frontend Developer and UI/UX manager</p>
+          <div class="stat-item">
+            <h3 class="stat-number">100%</h3>
+            <p class="stat-label">Client Satisfaction</p>
           </div>
-          <div class="timeline-item">
-            <h4>2019 - 2021</h4>
-            <p>Graphic Designer & Photographer</p>
+          <div class="stat-item">
+            <h3 class="stat-number">5+</h3>
+            <p class="stat-label">Years Experience</p>
           </div>
         </div>
-        <a href="#" class="btn primary pulse">Download Resume</a>
       </div>
     </div>
   </section>
- <section id="education" class="education-section">
-  <h2>Educational Background</h2>
-  <div class="education-list"></div>
-</section>
 
-
-
-  <!-- Design/Photography Section -->
-  <section id="design" class="design">
-    <div class="container">
-      <h3 class="section-title">My Creative Work</h3>
-      <div class="design-tabs">
-        <button class="tab-btn active" data-tab="graphic">Graphic Design</button>
-        <button class="tab-btn" data-tab="photo">Photography</button>
+  <!-- Work/Portfolio Section -->
+  <section id="work" class="work section-padding">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Featured Work</h2>
+        <p class="section-subtitle">Projects that showcase innovation</p>
       </div>
-      <div class="design-gallery">
-        <!-- Gallery items will be added dynamically -->
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-image"></div>
+          <div class="project-info">
+            <h3>Interactive Dashboard</h3>
+            <p>Real-time analytics platform with smooth animations and data visualization</p>
+            <div class="project-tags">
+              <span>React</span>
+              <span>WebGL</span>
+              <span>Animation</span>
+            </div>
+            <button class="project-btn">View Project</button>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image"></div>
+          <div class="project-info">
+            <h3>3D Web Experience</h3>
+            <p>Immersive WebGL experience with interactive 3D elements and particle effects</p>
+            <div class="project-tags">
+              <span>Three.js</span>
+              <span>GSAP</span>
+              <span>3D Graphics</span>
+            </div>
+            <button class="project-btn">View Project</button>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image"></div>
+          <div class="project-info">
+            <h3>E-Commerce Platform</h3>
+            <p>Modern shopping experience with advanced animations and smooth transitions</p>
+            <div class="project-tags">
+              <span>Vue.js</span>
+              <span>Animation</span>
+              <span>UX Design</span>
+            </div>
+            <button class="project-btn">View Project</button>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image"></div>
+          <div class="project-info">
+            <h3>Mobile App Design</h3>
+            <p>User-centered design for healthcare application with intuitive interactions</p>
+            <div class="project-tags">
+              <span>Figma</span>
+              <span>Mobile</span>
+              <span>UI/UX</span>
+            </div>
+            <button class="project-btn">View Project</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="skills section-padding">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>My Skills</h2>
+        <p class="section-subtitle">Technologies I master</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3>Frontend</h3>
+          <p>React, Vue, Angular, JavaScript, TypeScript</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-cube"></i>
+          </div>
+          <h3>3D Graphics</h3>
+          <p>Three.js, WebGL, Babylon.js, Canvas</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <h3>Animation</h3>
+          <p>GSAP, Framer Motion, CSS Animations</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-server"></i>
+          </div>
+          <h3>Backend</h3>
+          <p>Node.js, Express, MongoDB, PostgreSQL</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-palette"></i>
+          </div>
+          <h3>Design Tools</h3>
+          <p>Figma, Adobe XD, Blender, Photoshop</p>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3>Performance</h3>
+          <p>Optimization, SEO, Accessibility, PWA</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Contact Section -->
-  <section id="contact" class="contact">
-    <div class="container">
-      <h3 class="section-title">Get In Touch</h3>
-      <div class="contact-container">
-        <div class="contact-info">
-          <div class="info-item">
-            <i class="fas fa-envelope"></i>
-            <span>elijahametefe669@gmail.com</span>
-          </div>
-          <div class="info-item">
-            <i class="fas fa-phone"></i>
-            <span>+233593126360</span>
-          </div>
-          <div class="info-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>ACCRA , GHANA</span>
-         </div>
-          <div class="social-links">
-            <a href="https://github.com/Elijahamet" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/elijah-ametefe-4707362a7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="https://youtube.com/@techtutor_tv?si=iJqF5p169PDL984G" target="_blank"><i class="fab fa-youtube"></i></a>
-            <a href="https://dribbble.com/yourusername" target="_blank"><i class="fab fa-dribbble"></i></a>
-            <a href="https://www.instagram.com/sarkcesslil?igsh=YTZnbG54ZHlzOG50&utm_source=qr" target="_blank"><i class="fab fa-instagram"></i></a>
-          </div>
-        </div>
+  <section id="contact" class="contact section-padding">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Let's Work Together</h2>
+        <p class="section-subtitle">Get in touch for your next project</p>
+      </div>
+      <div class="contact-wrapper">
         <form class="contact-form" id="contactForm">
           <div class="form-group">
             <input type="text" placeholder="Your Name" required>
+            <span class="input-border"></span>
           </div>
           <div class="form-group">
             <input type="email" placeholder="Your Email" required>
+            <span class="input-border"></span>
           </div>
           <div class="form-group">
-            <input type="text" placeholder="Subject">
+            <textarea placeholder="Tell me about your project" rows="5" required></textarea>
+            <span class="input-border"></span>
           </div>
-          <div class="form-group">
-            <textarea placeholder="Your Message" required></textarea>
-          </div>
-          <button type="submit" class="btn primary pulse">Send Message</button>
+          <button type="submit" class="submit-btn">Send Message</button>
         </form>
+        <div class="contact-info">
+          <div class="info-group">
+            <h3>Email</h3>
+            <a href="mailto:elijahametefe669@gmail.com">elijahametefe669@gmail.com</a>
+          </div>
+          <div class="info-group">
+            <h3>Phone</h3>
+            <a href="tel:+233593126360">+233 593 126 360</a>
+          </div>
+          <div class="info-group">
+            <h3>Location</h3>
+            <p>Accra, Ghana</p>
+          </div>
+          <div class="social-links">
+            <a href="https://github.com/Elijahamet" target="_blank" class="social-icon">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="social-icon">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://twitter.com" target="_blank" class="social-icon">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://instagram.com" target="_blank" class="social-icon">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container">
-      <p>&copy; <span id="year"></span> ELIJAH AMETEFE. All rights reserved.</p>
-    </div>
+    <p>&copy; 2024 Elijah Ametefe. All rights reserved.</p>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
