@@ -32,12 +32,24 @@ const skills = [
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [hoveredProject, setHoveredProject] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1500);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Track mouse position for parallax effects
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   if (isLoading) {
@@ -92,74 +104,108 @@ function App() {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div style={{ maxWidth: '1000px', textAlign: 'center', zIndex: 10 }}>
-          <h1 style={{
-            fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-            margin: '0 0 1rem 0',
-            lineHeight: 1.2,
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #ffffff 0%, #00d4ff 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          style={{ maxWidth: '1000px', textAlign: 'center', zIndex: 10 }}>
+          <motion.h1 
+            style={{
+              fontSize: 'clamp(2.5rem, 8vw, 5rem)',
+              margin: '0 0 1rem 0',
+              lineHeight: 1.2,
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #ffffff 0%, #00d4ff 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}>
             Building Digital Experiences
-          </h1>
-          <p style={{
-            fontSize: '1.2rem',
-            color: '#00d4ff',
-            margin: '1rem 0 2rem 0',
-            fontWeight: 600
-          }}>
+          </motion.h1>
+          <motion.p 
+            style={{
+              fontSize: '1.2rem',
+              color: '#00d4ff',
+              margin: '1rem 0 2rem 0',
+              fontWeight: 600
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}>
             Web Developer | AI Builder | UI/UX Designer
-          </p>
-          <p style={{
-            fontSize: '1rem',
-            color: '#aaa',
-            maxWidth: '600px',
-            margin: '0 auto 2rem',
-            lineHeight: 1.6
-          }}>
+          </motion.p>
+          <motion.p 
+            style={{
+              fontSize: '1rem',
+              color: '#aaa',
+              maxWidth: '600px',
+              margin: '0 auto 2rem',
+              lineHeight: 1.6
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}>
             I create beautiful, performant web applications and explore the intersection of AI and user experience design.
-          </p>
-          <button style={{
-            padding: '1rem 2.5rem',
-            fontSize: '1rem',
-            fontWeight: 600,
-            color: '#0a0a0a',
-            backgroundColor: '#00d4ff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }} onMouseEnter={(e) => e.target.style.boxShadow = '0 0 30px rgba(0, 212, 255, 0.6)'} onMouseLeave={(e) => e.target.style.boxShadow = 'none'}>
+          </motion.p>
+          <motion.button 
+            style={{
+              padding: '1rem 2.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: '#0a0a0a',
+              backgroundColor: '#00d4ff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.6)' }}
+            whileTap={{ scale: 0.95 }}>
             View My Work
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
-        {/* Background orbs */}
-        <div style={{
-          position: 'absolute',
-          width: '400px',
-          height: '400px',
-          backgroundColor: 'rgba(0, 212, 255, 0.1)',
-          borderRadius: '50%',
-          top: '-100px',
-          left: '-100px',
-          filter: 'blur(50px)',
-          animation: 'float 8s ease-in-out infinite'
-        }} />
-        <div style={{
-          position: 'absolute',
-          width: '300px',
-          height: '300px',
-          backgroundColor: 'rgba(167, 139, 250, 0.1)',
-          borderRadius: '50%',
-          bottom: '-50px',
-          right: '-50px',
-          filter: 'blur(50px)',
-          animation: 'float 10s ease-in-out infinite'
-        }} />
+        {/* Background orbs with parallax */}
+        <motion.div 
+          style={{
+            position: 'absolute',
+            width: '400px',
+            height: '400px',
+            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+            borderRadius: '50%',
+            top: '-100px',
+            left: '-100px',
+            filter: 'blur(50px)',
+            x: mousePos.x * 0.02,
+            y: mousePos.y * 0.02
+          }}
+          animate={{ 
+            y: [0, -30, 0],
+            transition: { duration: 6, repeat: Infinity }
+          }} />
+        <motion.div 
+          style={{
+            position: 'absolute',
+            width: '300px',
+            height: '300px',
+            backgroundColor: 'rgba(167, 139, 250, 0.1)',
+            borderRadius: '50%',
+            bottom: '-50px',
+            right: '-50px',
+            filter: 'blur(50px)',
+            x: mousePos.x * -0.02,
+            y: mousePos.y * -0.02
+          }}
+          animate={{ 
+            y: [0, 30, 0],
+            transition: { duration: 8, repeat: Infinity }
+          }} />
       </section>
 
       {/* About Section */}
@@ -213,40 +259,55 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              whileHover={{ y: -5 }}
+              whileHover={{ y: -10, boxShadow: '0 0 30px rgba(0, 212, 255, 0.3)' }}
+              onMouseEnter={() => setHoveredProject(project.id)}
+              onMouseLeave={() => setHoveredProject(null)}
               style={{
-                backgroundColor: 'rgba(26, 26, 46, 0.4)',
-                border: '1px solid rgba(0, 212, 255, 0.2)',
+                backgroundColor: hoveredProject === project.id ? 'rgba(26, 26, 46, 0.6)' : 'rgba(26, 26, 46, 0.4)',
+                border: hoveredProject === project.id ? '1px solid rgba(0, 212, 255, 0.5)' : '1px solid rgba(0, 212, 255, 0.2)',
                 borderRadius: '12px',
                 padding: '2rem',
                 backdropFilter: 'blur(10px)',
-                cursor: 'pointer'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.5)';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 212, 255, 0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0, 212, 255, 0.2)';
-                e.currentTarget.style.boxShadow = 'none';
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
               }}>
-              <h3 style={{ color: '#00d4ff', marginBottom: '1rem', fontSize: '1.3rem' }}>{project.title}</h3>
+              <motion.h3 
+                style={{ color: '#00d4ff', marginBottom: '1rem', fontSize: '1.3rem' }}
+                initial={{ x: 0 }}
+                animate={{ x: hoveredProject === project.id ? 5 : 0 }}
+                transition={{ duration: 0.3 }}>
+                {project.title}
+              </motion.h3>
               <p style={{ color: '#aaa', marginBottom: '1.5rem', lineHeight: 1.6 }}>{project.description}</p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                {project.tags.map((tag) => (
-                  <span key={tag} style={{
-                    padding: '0.4rem 0.8rem',
-                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                    border: '1px solid rgba(0, 212, 255, 0.3)',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    color: '#00d4ff'
-                  }}>
+                {project.tags.map((tag, tagIdx) => (
+                  <motion.span 
+                    key={tag}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: tagIdx * 0.05 }}
+                    whileHover={{ scale: 1.1 }}
+                    style={{
+                      padding: '0.4rem 0.8rem',
+                      backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                      border: '1px solid rgba(0, 212, 255, 0.3)',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      color: '#00d4ff',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}>
                     {tag}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
-              <a href="#" style={{ color: '#00d4ff', textDecoration: 'none', fontWeight: 600 }}>Learn More →</a>
+              <motion.a 
+                href="#" 
+                style={{ color: '#00d4ff', textDecoration: 'none', fontWeight: 600 }}
+                whileHover={{ x: 5, color: '#00ffff' }}
+                transition={{ duration: 0.2 }}>
+                Learn More →
+              </motion.a>
             </motion.div>
           ))}
         </div>
@@ -270,18 +331,43 @@ function App() {
           }}>
           Skills & Technologies
         </motion.h2>
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1rem'
-        }}>
+        <motion.div 
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '1rem'
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.05,
+                delayChildren: 0.2
+              }
+            }
+          }}>
           {skills.map((skill, idx) => (
             <motion.div
               key={skill}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: idx * 0.05 }}
-              whileHover={{ scale: 1.05 }}
+              variants={{
+                hidden: { opacity: 0, y: 20, scale: 0.8 },
+                visible: { 
+                  opacity: 1, 
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.4 }
+                }
+              }}
+              whileHover={{ 
+                scale: 1.1,
+                backgroundColor: 'rgba(0, 212, 255, 0.2)',
+                boxShadow: '0 0 15px rgba(0, 212, 255, 0.4)'
+              }}
+              whileTap={{ scale: 0.95 }}
               style={{
                 padding: '1rem 1.5rem',
                 backgroundColor: 'rgba(0, 212, 255, 0.1)',
@@ -295,7 +381,7 @@ function App() {
               {skill}
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* Contact Section */}
@@ -306,33 +392,50 @@ function App() {
         borderTop: '1px solid rgba(0, 212, 255, 0.1)',
         textAlign: 'center'
       }}>
-        <h2 style={{
-          fontSize: '2.5rem',
-          marginBottom: '2rem',
-          color: '#00d4ff'
-        }}>Get In Touch</h2>
-        <p style={{
-          fontSize: '1.1rem',
-          color: '#aaa',
-          marginBottom: '2rem'
-        }}>
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          style={{
+            fontSize: '2.5rem',
+            marginBottom: '2rem',
+            color: '#00d4ff'
+          }}>
+          Get In Touch
+        </motion.h2>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{
+            fontSize: '1.1rem',
+            color: '#aaa',
+            marginBottom: '2rem'
+          }}>
           I'm always interested in hearing about new projects and opportunities.
-        </p>
-        <a href="mailto:contact@example.com" style={{
-          display: 'inline-block',
-          padding: '1rem 2.5rem',
-          fontSize: '1rem',
-          fontWeight: 600,
-          color: '#0a0a0a',
-          backgroundColor: '#00d4ff',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          textDecoration: 'none',
-          transition: 'all 0.3s ease'
-        }} onMouseEnter={(e) => e.target.style.boxShadow = '0 0 30px rgba(0, 212, 255, 0.6)'} onMouseLeave={(e) => e.target.style.boxShadow = 'none'}>
+        </motion.p>
+        <motion.a 
+          href="mailto:contact@example.com" 
+          style={{
+            display: 'inline-block',
+            padding: '1rem 2.5rem',
+            fontSize: '1rem',
+            fontWeight: 600,
+            color: '#0a0a0a',
+            backgroundColor: '#00d4ff',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            textDecoration: 'none',
+            transition: 'all 0.3s ease'
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0, 212, 255, 0.6)' }}
+          whileTap={{ scale: 0.95 }}>
           Send Me an Email
-        </a>
+        </motion.a>
       </section>
 
       {/* Footer */}
